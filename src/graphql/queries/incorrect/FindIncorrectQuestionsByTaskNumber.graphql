@@ -1,0 +1,12 @@
+query FindIncorrectQuestionsByTaskNumber($data: FindIncorrectQuestionsByTaskNumberInput!) {
+  FindIncorrectQuestionsByTaskNumber(data: $data) {
+    text
+    explanation
+    id
+    correctAnswer
+    question
+    task {
+      taskNumber
+    }
+  }
+}

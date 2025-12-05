@@ -1,0 +1,3 @@
+mutation CreateUserVariant($data: CreateUserVariantInput!) {
+  CreateUserVariant(data: $data)
+}

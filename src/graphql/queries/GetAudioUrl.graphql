@@ -1,0 +1,3 @@
+query GetAudioUrl($data: AudioInput!) {
+  GetAudioUrl(data: $data)
+}

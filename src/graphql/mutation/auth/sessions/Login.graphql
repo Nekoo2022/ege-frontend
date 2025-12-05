@@ -1,0 +1,8 @@
+mutation Login($data: LoginInput!) {
+  Login(data: $data) {
+    message
+    userId
+    requireTotp
+    success
+  }
+}

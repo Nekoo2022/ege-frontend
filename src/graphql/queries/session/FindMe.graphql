@@ -1,0 +1,16 @@
+query FindMe {
+  FindMe {
+    user {
+      id
+      email
+      avatar
+      experience
+      rating
+      createdAt
+      isTwoFactor
+      isDeactivated
+      telegramId
+    }
+    isAuth
+  }
+}

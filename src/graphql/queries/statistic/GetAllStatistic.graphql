@@ -1,0 +1,7 @@
+query GetAllStatistic {
+  GetAllStatistic {
+    totalAnswer
+    totalCorrectAnswer
+    correctPercent
+  }
+}

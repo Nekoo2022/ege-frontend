@@ -1,0 +1,15 @@
+query FindUserVariantById($variantId: Int!) {
+  FindUserVariantById(variantId: $variantId) {
+    questions {
+      id
+      task {
+        taskNumber
+      }
+      text
+      question
+      experience
+      correctAnswer
+      explanation
+    }
+  }
+}

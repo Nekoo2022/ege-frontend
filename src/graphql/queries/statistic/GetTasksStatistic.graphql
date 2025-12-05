@@ -1,0 +1,9 @@
+query GetTasksStatistic($data: GetTasksStatisticInput!) {
+  GetTasksStatistic(data: $data) {
+    correct
+    answered
+    correctPercent
+    totalQuestions
+    taskNumber
+  }
+}

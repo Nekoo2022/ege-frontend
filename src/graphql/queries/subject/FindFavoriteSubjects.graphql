@@ -1,0 +1,8 @@
+query FindFavoriteSubjects {
+  FindFavoriteSubjects {
+    name
+    tasksCount
+    slug
+    questionsCount
+  }
+}

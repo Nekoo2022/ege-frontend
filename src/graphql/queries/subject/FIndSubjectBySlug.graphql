@@ -1,0 +1,6 @@
+query FindSubjectBySlug($slug: String!) {
+  FindSubjectBySlug(slug: $slug) {
+    questionsCount
+    taskNumber
+  }
+}

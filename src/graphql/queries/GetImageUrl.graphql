@@ -1,0 +1,7 @@
+query GetImageUrl($data: ImageInput!) {
+  GetImageUrl(data: $data) {
+    imageUrls
+    explanationImageUrls
+    globalImageUrls
+  }
+}

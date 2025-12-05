@@ -1,0 +1,10 @@
+query GetSubjectsStatistic {
+  GetSubjectsStatistic {
+    subjectSlug
+    correct
+    subjectName
+    answered
+    correctPercent
+    totalQuestions
+  }
+}

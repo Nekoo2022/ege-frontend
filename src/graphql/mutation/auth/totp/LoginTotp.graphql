@@ -1,0 +1,3 @@
+mutation LoginTotp($data: LoginTotpInput!) {
+  LoginTotp(data: $data)
+}

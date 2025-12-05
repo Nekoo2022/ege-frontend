@@ -1,0 +1,3 @@
+mutation ToggleFavoriteSubject($data: ToggleFavoriteSubjectInput!) {
+  ToggleFavoriteSubject(data: $data)
+}

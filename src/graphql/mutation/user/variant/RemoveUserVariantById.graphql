@@ -1,0 +1,3 @@
+mutation RemoveUserVariantById($variantId: Int!) {
+  RemoveUserVariantById(variantId: $variantId)
+}

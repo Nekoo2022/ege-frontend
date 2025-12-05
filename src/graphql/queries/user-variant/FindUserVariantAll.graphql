@@ -1,0 +1,16 @@
+query FindUserVariantAll {
+  FindUserVariantAll {
+    id
+    questions {
+      id
+      task {
+        taskNumber
+      }
+      text
+      question
+      experience
+      correctAnswer
+      explanation
+    }
+  }
+}

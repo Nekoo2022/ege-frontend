@@ -1,0 +1,3 @@
+query FindTaskCount($data: FindTaskCountInput!) {
+  FindTaskCount(data: $data)
+}

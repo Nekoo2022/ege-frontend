@@ -1,0 +1,23 @@
+query FindRandomQuestions($data: FindQuestionsByTaskNumberInput!) {
+  FindRandomQuestions(data: $data) {
+    id
+    type
+    text
+    question
+    intro
+    audioPath
+    speakers
+    statements
+    tableSpec
+    correctAnswer
+    explanation
+    images
+    explanationImages
+    globalImages
+    hasCorrectAnswer
+    subQuestions
+    task {
+      taskNumber
+    }
+  }
+}
