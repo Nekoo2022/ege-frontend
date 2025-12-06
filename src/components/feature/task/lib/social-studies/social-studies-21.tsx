@@ -87,9 +87,8 @@ export function SocialStudies21({ task, isCorrect, setIsCorrect, slug, taskIndex
 
           {isCorrect && (
             <TaskItemExplanation
-              correctAnswer={task.correctAnswer}
+              task={task}
               isCorrect={isCorrect}
-              explanation={task.explanation}
               images={task.explanationImages?.map((key) => urls[key])}
             />
           )}
