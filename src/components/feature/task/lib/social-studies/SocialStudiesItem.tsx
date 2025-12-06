@@ -119,12 +119,11 @@ export function SocialStudiesItem({
         <img className="mx-auto" src={data?.GetImageUrl.globalImageUrls[0]} alt="no-image" />
       ) : null}
 
-      <TaskItemForm questionId={task.id} setIsCorrect={setIsCorrect} isCorrect={isCorrect} slug={slug} />
+      <TaskItemForm task={task} setIsCorrect={setIsCorrect} isCorrect={isCorrect} slug={slug} />
 
       <TaskItemExplanation
-        correctAnswer={task.correctAnswer}
+        task={task}
         isCorrect={isCorrect}
-        explanation={task.explanation}
         images={task.explanationImages?.map((key) => urls[key])}
       />
     </div>
