@@ -19,11 +19,11 @@ export default function UserAvatar() {
   }
 
   // Если нет данных пользователя, тоже не показываем
-  if (!data?.FindMe?.email) {
+  if (!data?.FindMe?.user?.email) {
     return null;
   }
 
-  const email = data.FindMe.email;
+  const email = data.FindMe.user.email;
   const firstLetter = email.charAt(0).toUpperCase() || "?";
 
   return (
