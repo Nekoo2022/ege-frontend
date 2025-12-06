@@ -9,13 +9,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useApolloClient } from "@apollo/client";
+import { mapCorrectType } from "@/hooks/mapCorrectType";
 
 interface VariantItemFormProps {
   questionId: string;
-  setIsCorrect: (value: boolean) => void;
-  isCorrect: boolean | undefined;
+  isCorrect: "full" | "partial" | "wrong" | "no-correct" | undefined;
+  setIsCorrect: (isCorrect: "full" | "partial" | "wrong" | "no-correct") => void;
   slug: string;
 }
+
 export function VariantItemForm({ questionId, setIsCorrect, isCorrect, slug }: VariantItemFormProps) {
   const form = useForm<TypeCreateAnswerSchema>({
     resolver: zodResolver(createAnswerSchema),
@@ -26,25 +28,18 @@ export function VariantItemForm({ questionId, setIsCorrect, isCorrect, slug }: V
     reValidateMode: "onChange",
   });
 
-  const {
-    handleSubmit,
-    formState: { isValid },
-  } = form;
-
+  const { handleSubmit } = form;
   const apolloClient = useApolloClient();
 
   const [create, { loading: isLoadingCreate }] = useCreateAnswerMutation({
     async onCompleted(data) {
-      if (data.CreateAnswer.isCorrect === false) {
-        setIsCorrect(false);
-        toast.error("Неверно");
-      } else if (data.CreateAnswer.isCorrect) {
-        setIsCorrect(true);
-        toast.success("Верно! Опыт начислен");
-        try {
-          await apolloClient.refetchQueries({ include: [FindMeDocument] });
-        } catch {}
-      }
+      const status = mapCorrectType(data.CreateAnswer.isCorrect);
+      console.log(status);
+      setIsCorrect(status);
+
+      if (status === "full") toast.success("Верно! Опыт начислен");
+      else if (status === "partial") toast("Частично верно", { icon: "⚠️" });
+      else if (status === "wrong") toast.error("Неверно");
     },
     onError(error) {
       toast.error(error.message || "Ошибка");
@@ -53,13 +48,7 @@ export function VariantItemForm({ questionId, setIsCorrect, isCorrect, slug }: V
 
   function onSubmit(data: TypeCreateAnswerSchema) {
     create({
-      variables: {
-        data: {
-          answer: data.answer,
-          questionId,
-          slug,
-        },
-      },
+      variables: { data: { userAnswer: data.answer, questionId } },
     });
   }
 
@@ -77,8 +66,8 @@ export function VariantItemForm({ questionId, setIsCorrect, isCorrect, slug }: V
                   <Input
                     placeholder="ответ"
                     className={`h-11 md:h-12 text-base transition-all duration-300 placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-violet-200 focus-visible:border-violet-600
-  ${isCorrect === true ? "border-green-500 bg-green-500/10 text-green-700 dark:text-green-300" : ""}
-  ${isCorrect === false ? "border-red-500 bg-red-500/10 text-red-700 dark:text-red-300" : ""}`}
+${isCorrect === "full" ? "border-green-500 bg-green-500/10 text-green-700 dark:text-green-300" : ""}
+${isCorrect === "wrong" ? "border-red-500 bg-red-500/10 text-red-700 dark:text-red-300" : ""}`}
                     {...field}
                     disabled={isCorrect !== undefined || isLoadingCreate}
                   />

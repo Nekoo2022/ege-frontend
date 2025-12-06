@@ -16,6 +16,7 @@ export function VariantSlider({ slug, variantId }: { slug: string; variantId: nu
   const [activeIndex, setActiveIndex] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
+  const visibleCount = Math.min(VISIBLE_COUNT, questions.length || VISIBLE_COUNT);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -26,14 +27,40 @@ export function VariantSlider({ slug, variantId }: { slug: string; variantId: nu
       const maxScrollLeft = container.scrollWidth - container.clientWidth;
       setCanScrollPrev(scrollLeft > 0);
       setCanScrollNext(scrollLeft < maxScrollLeft - 1); // -1 на случай дробных пикселей
+
+      // вычисляем центр видимой области и активный индекс
+      const itemWidth = getItemWidth();
+      if (itemWidth > 0) {
+        const firstVisibleIndex = Math.round(scrollLeft / itemWidth);
+        const centerIndex = firstVisibleIndex + Math.floor(visibleCount / 2);
+        const clamped = Math.max(0, Math.min(questions.length - 1, centerIndex));
+        setActiveIndex(clamped);
+      }
     };
 
     handleScroll(); // инициализация
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [questions]);
+  }, [questions, visibleCount]);
 
-  const getItemWidth = () => (containerRef.current ? containerRef.current.clientWidth / VISIBLE_COUNT : 0);
+  // При ресайзе переставляем прокрутку, чтобы активный оставался в центре
+  useEffect(() => {
+    const handleResize = () => {
+      const container = containerRef.current;
+      if (!container) return;
+      const itemWidth = getItemWidth();
+      if (!itemWidth) return;
+      const centerOffset = Math.floor(visibleCount / 2);
+      const targetLeft = itemWidth * Math.max(0, activeIndex - centerOffset);
+      container.scrollTo({ left: targetLeft });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [activeIndex, visibleCount]);
+
+  const getItemWidth = () =>
+    containerRef.current ? containerRef.current.clientWidth / Math.max(1, visibleCount) : 0;
 
   const handleItemClick = (index: number) => {
     setActiveIndex(index);
@@ -43,12 +70,12 @@ export function VariantSlider({ slug, variantId }: { slug: string; variantId: nu
     const itemWidth = getItemWidth();
     const scrollLeft = container.scrollLeft;
     const firstVisibleIndex = Math.round(scrollLeft / itemWidth);
-    const centerIndex = firstVisibleIndex + Math.floor(VISIBLE_COUNT / 2);
+    const centerIndex = firstVisibleIndex + Math.floor(visibleCount / 2);
 
     if (index < centerIndex - EDGE_THRESHOLD) {
-      container.scrollTo({ left: itemWidth * (index - Math.floor(VISIBLE_COUNT / 2)), behavior: "smooth" });
+      container.scrollTo({ left: itemWidth * (index - Math.floor(visibleCount / 2)), behavior: "smooth" });
     } else if (index > centerIndex + EDGE_THRESHOLD) {
-      container.scrollTo({ left: itemWidth * (index - Math.floor(VISIBLE_COUNT / 2)), behavior: "smooth" });
+      container.scrollTo({ left: itemWidth * (index - Math.floor(visibleCount / 2)), behavior: "smooth" });
     }
   };
 
@@ -61,6 +88,20 @@ export function VariantSlider({ slug, variantId }: { slug: string; variantId: nu
       behavior: "smooth",
     });
   };
+
+  // Когда активный индекс меняется программно — прокручиваем так, чтобы он был в центре
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const itemWidth = getItemWidth();
+    if (!itemWidth) return;
+
+    const centerOffset = Math.floor(visibleCount / 2);
+    const targetLeft = itemWidth * Math.max(0, activeIndex - centerOffset);
+    container.scrollTo({ left: targetLeft, behavior: "smooth" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIndex, visibleCount]);
 
   // Skeleton при загрузке
   if (loading)
@@ -110,12 +151,16 @@ export function VariantSlider({ slug, variantId }: { slug: string; variantId: nu
           <ChevronLeft className="w-4 h-4" />
         </button>
 
-        <div ref={containerRef} className="flex overflow-hidden flex-1" style={{ scrollSnapType: "x mandatory" }}>
+        <div
+          ref={containerRef}
+          className="flex overflow-x-auto flex-1 snap-x snap-mandatory overflow-y-hidden py-4"
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
           {questions.map((_, idx) => (
             <div
               key={idx}
-              className="shrink-0 scroll-snap-align-start"
-              style={{ width: `calc(100% / ${VISIBLE_COUNT})` }}
+              className="shrink-0 snap-start"
+              style={{ width: `calc(100% / ${Math.max(1, visibleCount)})` }}
             >
               <motion.button
                 onClick={() => handleItemClick(idx)}

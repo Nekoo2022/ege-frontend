@@ -1,16 +1,10 @@
 import { TaskItemForm } from "../TaskItem/TaskItemForm";
+import { TextTask } from "../types/task";
 import { TaskItemExplanation } from "../utils/TaskItemExplanationPhysic";
 import { TaskItemHeader } from "../utils/TaskItemHeader";
 
 interface ParseRus8Interface {
-  task: {
-    text: string;
-    taskNumber: number;
-    question?: string;
-    explanation?: string | null;
-    id: string;
-    correctAnswer: string[];
-  };
+  task: TextTask;
   taskIndex: number;
   slug: string;
   isCorrect: "full" | "partial" | "wrong" | "no-correct" | undefined;
@@ -116,7 +110,7 @@ export function ParseRus8({ task, taskIndex, isCorrect, slug, setIsCorrect }: Pa
         </table>
       </div>
 
-      <TaskItemForm questionId={id} setIsCorrect={setIsCorrect} isCorrect={isCorrect} slug={slug} />
+      <TaskItemForm task={task} setIsCorrect={setIsCorrect} isCorrect={isCorrect} slug={slug} />
 
       <TaskItemExplanation isCorrect={isCorrect} explanation={explanation} />
     </div>
