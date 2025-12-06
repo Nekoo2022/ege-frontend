@@ -15,7 +15,6 @@ export function TaskTabsContent() {
               taskNumber: (task as any).taskNumber ?? taskNumber,
               explanation: task.explanation!,
             }}
-            numberTask={taskNumber}
             isCorrect={answers[task.id]}
             setIsCorrect={(val) => setAnswers((prev) => ({ ...prev, [task.id]: val }))}
             slug={slug}
