@@ -1,4 +1,4 @@
-import { FindRandomTasksQuery } from "@/graphql/generated/output";
+import { FindRandomQuestionsQuery } from "@/graphql/generated/output";
 import { ApolloQueryResult } from "@apollo/client";
 import { useCallback, useMemo, useState } from "react";
 
@@ -6,7 +6,7 @@ interface UseTasksPagerOptions {
   total: number;
   perPage?: number;
   initialSkip?: number;
-  onPageChange?: (skip: number) => Promise<ApolloQueryResult<FindRandomTasksQuery>>;
+  onPageChange?: (skip: number) => Promise<ApolloQueryResult<FindRandomQuestionsQuery>>;
 }
 
 export function useTasksPager({ total, perPage = 20, initialSkip = 0, onPageChange }: UseTasksPagerOptions) {
