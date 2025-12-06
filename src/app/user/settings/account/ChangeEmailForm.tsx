@@ -19,7 +19,7 @@ export default function ChangeEmailForm() {
   const form = useForm<TypeChangeEmailSchema>({
     resolver: zodResolver(changeEmailSchema),
     defaultValues: {
-      email: userData?.FindMe?.email || "",
+      email: userData?.FindMe.user?.email || "",
     },
     mode: "onChange",
     reValidateMode: "onChange",
@@ -27,8 +27,8 @@ export default function ChangeEmailForm() {
 
   // Обновляем форму когда данные пользователя загружены
   useEffect(() => {
-    if (userData?.FindMe?.email) {
-      form.reset({ email: userData.FindMe.email });
+    if (userData?.FindMe?.user?.email) {
+      form.reset({ email: userData.FindMe.user?.email });
     }
   }, [userData, form]);
 
@@ -46,7 +46,7 @@ export default function ChangeEmailForm() {
   });
 
   async function onSubmit(data: TypeChangeEmailSchema) {
-    if (data.email === userData?.FindMe?.email) {
+    if (data.email === userData?.FindMe?.user?.email) {
       toast.info("Новый email совпадает с текущим");
       return;
     }
@@ -89,7 +89,7 @@ export default function ChangeEmailForm() {
             <Button
               type="submit"
               className="mt-2 w-full bg-[#7b21e2] text-white"
-              disabled={!isValid || isLoading || userData?.FindMe?.email === form.watch("email")}
+              disabled={!isValid || isLoading || userData?.FindMe?.user?.email === form.watch("email")}
             >
               {isLoading ? "Изменение..." : "Изменить email"}
             </Button>
