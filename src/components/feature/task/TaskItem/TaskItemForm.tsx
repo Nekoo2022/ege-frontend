@@ -56,7 +56,7 @@ export function TaskItemForm({ task, setIsCorrect, isCorrect, slug }: TaskItemFo
       else if (status === "partial") toast("Частично верно", { icon: "⚠️" });
       else if (status === "wrong") toast.error("Неверно");
 
-      if (!isPracticeMode) {
+      if (!isPracticeMode && isAuthentificated) {
         try {
           const prefix = `answers:practice:${slug}:`;
           for (let i = 0; i < localStorage.length; i++) {
@@ -74,7 +74,9 @@ export function TaskItemForm({ task, setIsCorrect, isCorrect, slug }: TaskItemFo
           }
 
           const finalAnswer = form.getValues("answer") ?? "";
-          localStorage.setItem(storageKey, finalAnswer);
+          if (isAuthentificated) {
+            localStorage.setItem(storageKey, finalAnswer);
+          }
         } catch {}
       }
 
@@ -100,7 +102,7 @@ export function TaskItemForm({ task, setIsCorrect, isCorrect, slug }: TaskItemFo
   );
 
   useEffect(() => {
-    if (isPracticeMode) {
+    if (isPracticeMode && isAuthentificated) {
       try {
         const saved = localStorage.getItem(storageKey);
         if (saved) form.reset({ answer: saved });
@@ -115,16 +117,26 @@ export function TaskItemForm({ task, setIsCorrect, isCorrect, slug }: TaskItemFo
       if (name !== "answer") return;
 
       try {
-        if (isPracticeMode) {
+        if (isPracticeMode && isAuthentificated) {
           localStorage.setItem(storageKey, value.answer ?? "");
         } else if (isCorrect === "full") {
-          localStorage.setItem(storageKey, value.answer ?? "");
+          if (isAuthentificated) localStorage.setItem(storageKey, value.answer ?? "");
         }
       } catch {}
     });
 
     return () => sub.unsubscribe();
   }, [form, storageKey, isPracticeMode, isCorrect]);
+
+  // When auth changes — if user deauthentificated, clear storage for current key
+  useEffect(() => {
+    if (!isAuthentificated) {
+      try {
+        localStorage.removeItem(storageKey);
+      } catch {}
+      form.reset({ answer: "" });
+    }
+  }, [isAuthentificated, storageKey]);
 
   return (
     <>
